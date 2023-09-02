@@ -1,8 +1,5 @@
 accountBalanceInterestRate: 1
 
-dataSourceClassName: org.postgresql.ds.PGSimpleDataSource
-serverName: localhost
-portNumber: 5432
-databaseName: cleverbank
+dbUrl: jdbc:postgresql://localhost:5432/cleverbank
 user: root
 password: root
