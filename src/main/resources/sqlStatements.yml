@@ -1,0 +1,2 @@
+  accounts:
+    get_all: SELECT * FROM accounts
