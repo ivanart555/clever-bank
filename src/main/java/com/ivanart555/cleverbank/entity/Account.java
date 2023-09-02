@@ -1,5 +1,6 @@
 package com.ivanart555.cleverbank.entity;
 
+import com.ivanart555.cleverbank.enums.CurrencyType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
