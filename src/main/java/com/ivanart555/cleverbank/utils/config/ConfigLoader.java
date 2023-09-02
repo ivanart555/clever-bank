@@ -28,9 +28,9 @@ public class ConfigLoader {
         }
     }
 
-    public static Object getValue(String key) {
+    public static String getValue(String key) {
         if (configData != null) {
-            return configData.get(key);
+            return String.valueOf(configData.get(key));
         }
         throw new IllegalArgumentException("Configuration value not found for key: " + key);
     }
