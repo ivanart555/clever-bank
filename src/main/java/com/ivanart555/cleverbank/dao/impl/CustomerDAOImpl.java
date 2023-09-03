@@ -38,15 +38,14 @@ public class CustomerDAOImpl implements CustomerDAO {
 
     @Override
     public Customer getById(Long id) throws DAOException {
-        Customer customer = new Customer();
         String sqlStatement = SQLStatements.getValue("customers", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                customer = mapResultSetToCustomer(rs);
+            if (rs.next()) {
+                return mapResultSetToCustomer(rs);
             }
-            return customer;
+            return null;
         } catch (SQLException e) {
             String msg = String.format("Failed to get customer with ID '%d'", id);
             throw new DAOException(msg, e);

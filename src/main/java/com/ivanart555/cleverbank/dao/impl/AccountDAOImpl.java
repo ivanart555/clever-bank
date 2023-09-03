@@ -40,14 +40,13 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public Account getById(Long id) throws DAOException {
-        Account account = new Account();
         String sqlStatement = SQLStatements.getValue("accounts", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                account = mapResultSetToAccount(rs);
+            if (rs.next()) {
+                return mapResultSetToAccount(rs);
             }
-            return account;
+            return null;
         } catch (SQLException e) {
             String msg = format("Failed to get account with ID '%s'", id);
             throw new DAOException(msg, e);

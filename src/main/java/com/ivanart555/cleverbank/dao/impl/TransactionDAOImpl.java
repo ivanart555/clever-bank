@@ -38,15 +38,14 @@ public class TransactionDAOImpl implements TransactionDAO {
 
     @Override
     public Transaction getById(Long id) throws DAOException {
-        Transaction transaction = new Transaction();
         String sqlStatement = SQLStatements.getValue("transactions", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                transaction = mapResultSetToTransaction(rs);
+            if (rs.next()) {
+                return mapResultSetToTransaction(rs);
             }
-            return transaction;
+            return null;
         } catch (SQLException e) {
             String msg = String.format("Failed to get transaction with ID '%d'", id);
             throw new DAOException(msg, e);

@@ -38,15 +38,14 @@ public class BankDAOImpl implements BankDAO {
 
     @Override
     public Bank getById(Long id) throws DAOException {
-        Bank bank = new Bank();
         String sqlStatement = SQLStatements.getValue("banks", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                bank = mapResultSetToBank(rs);
+            if (rs.next()) {
+                return mapResultSetToBank(rs);
             }
-            return bank;
+            return null;
         } catch (SQLException e) {
             String msg = String.format("Failed to get bank with ID '%d'", id);
             throw new DAOException(msg, e);
