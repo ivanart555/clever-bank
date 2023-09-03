@@ -15,11 +15,6 @@ import static java.lang.String.format;
 
 public class AccountDAOImpl implements AccountDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountDAOImpl.class);
-    private final Connection connection;
-
-    public AccountDAOImpl(Connection connection) {
-        this.connection = connection;
-    }
 
     @Override
     public List<Account> getAll(Connection connection) throws DAOException {

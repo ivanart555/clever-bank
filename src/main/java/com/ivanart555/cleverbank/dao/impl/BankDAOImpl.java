@@ -14,11 +14,6 @@ import java.util.List;
 
 public class BankDAOImpl implements BankDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(BankDAOImpl.class);
-    private final Connection connection;
-
-    public BankDAOImpl() throws SQLException {
-        this.connection = DataSource.getConnection();
-    }
 
     @Override
     public List<Bank> getAll(Connection connection) throws DAOException {

@@ -14,11 +14,6 @@ import java.util.List;
 
 public class TransactionDAOImpl implements TransactionDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionDAOImpl.class);
-    private final Connection connection;
-
-    public TransactionDAOImpl(Connection connection) {
-        this.connection = connection;
-    }
 
     @Override
     public List<Transaction> getAll(Connection connection) throws DAOException {
