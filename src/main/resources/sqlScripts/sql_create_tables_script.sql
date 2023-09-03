@@ -27,10 +27,10 @@ create table cleverbank.accounts
         constraint accounts_pkey
             primary key,
     number       varchar                     not null,
-    "bankId"     bigint                      not null
+    "bank_id"     bigint                      not null
         constraint accounts_banks_id_fk
             references cleverbank.banks,
-    "customerId" bigint                      not null
+    "customer_id" bigint                      not null
         constraint accounts_customers_id_fk
             references cleverbank.customers,
     balance      numeric(15, 2) default 0.00 not null

@@ -27,7 +27,7 @@ VALUES ('Alexander', 'Richardson'),
        ('Allistair', 'Thornton'),
        ('Jacob', 'Dejesus');
 
-INSERT INTO cleverbank.accounts ("number", "bankId", "customerId", balance)
+INSERT INTO cleverbank.accounts ("number", "bank_id", "customer_id", balance)
 VALUES ('BY12ABCD12345678901234012345', 1, 1, 12345),
        ('BY34EFGH56789012345678023456', 2, 2, 67890),
        ('BY56IJKL90123456789012034567', 3, 3, 45678),
