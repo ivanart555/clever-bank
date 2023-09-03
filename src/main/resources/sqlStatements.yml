@@ -16,3 +16,9 @@
       create: INSERT INTO cleverbank.customers (first_name, last_name) VALUES (?, ?)
       update: UPDATE cleverbank.customers SET first_name = ?, last_name = ? WHERE id = ?
       delete: DELETE FROM cleverbank.customers WHERE id = ?
+  transactions:
+    get.all: SELECT * FROM cleverbank.transactions
+    get.byId: SELECT * FROM cleverbank.transactions WHERE id = ?
+    create: INSERT INTO cleverbank.transactions (date_time, amount, sender_account_id, recipient_account_id) VALUES (?, ?, ?, ?)
+    update: UPDATE cleverbank.transactions SET date_time = ?, amount = ?, sender_account_id = ?, recipient_account_id = ? WHERE id = ?
+    delete: DELETE FROM cleverbank.transactions WHERE id = ?
