@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 public class SQLStatements {
-    private static final Logger logger = LoggerFactory.getLogger(SQLStatements.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLStatements.class);
     private static final String SQL_STATEMENTS_FILE = "/sqlStatements.yml";
     private static final Map<String, Map<String, String>> sqlStatements = loadSQLStatements();
 
@@ -19,11 +19,11 @@ public class SQLStatements {
                 Yaml yaml = new Yaml();
                 return yaml.load(inputStream);
             } else {
-                logger.error("Failed to load sql statements from " + SQL_STATEMENTS_FILE + " file. The file may not exist.");
+                LOGGER.error("Failed to load sql statements from " + SQL_STATEMENTS_FILE + " file. The file may not exist.");
                 return null;
             }
         } catch (IOException e) {
-            logger.error("Failed to read sql statements from " + SQL_STATEMENTS_FILE + " file due to an IO error: " + e.getMessage());
+            LOGGER.error("Failed to read sql statements from " + SQL_STATEMENTS_FILE + " file due to an IO error: " + e.getMessage());
             return null;
         }
     }

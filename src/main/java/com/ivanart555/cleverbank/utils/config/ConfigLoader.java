@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 public class ConfigLoader {
-    private static final Logger logger = LoggerFactory.getLogger(SQLStatements.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SQLStatements.class);
     private static final String CONFIG_FILE = "/config.yml";
     private static final Map<String, String> configData = loadConfig();
 
@@ -19,11 +19,11 @@ public class ConfigLoader {
                 Yaml yaml = new Yaml();
                 return yaml.load(inputStream);
             } else {
-                logger.error("Failed to load config from  " + CONFIG_FILE + " file! The file may not exist.");
+                LOGGER.error("Failed to load config from  " + CONFIG_FILE + " file! The file may not exist.");
                 return null;
             }
         } catch (IOException e) {
-            logger.error("Failed to load config from  " + CONFIG_FILE + " file due to an IO error: " + e.getMessage());
+            LOGGER.error("Failed to load config from  " + CONFIG_FILE + " file due to an IO error: " + e.getMessage());
             return null;
         }
     }

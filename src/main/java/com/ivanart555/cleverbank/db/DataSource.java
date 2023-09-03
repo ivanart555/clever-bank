@@ -4,8 +4,11 @@ import com.ivanart555.cleverbank.utils.config.ConfigLoader;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 
-public class DatabaseConnection {
+
+public class DataSource {
     private static final HikariDataSource dataSource;
     private static final String USER = "user";
     private static final String PASSWORD = "password";
@@ -19,7 +22,7 @@ public class DatabaseConnection {
         dataSource = new HikariDataSource(config);
     }
 
-    public static HikariDataSource getDataSource() {
-        return dataSource;
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
     }
 }

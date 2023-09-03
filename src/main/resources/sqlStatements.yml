@@ -1,2 +1,6 @@
   accounts:
-    get_all: SELECT * FROM accounts
+    get.all: SELECT * FROM cleverbank.accounts
+    get.byId: SELECT * FROM cleverbank.accounts WHERE id = ?
+    create: INSERT INTO cleverbank.accounts (number, bank_id, customer_id) VALUES (?, ?, ?)
+    update: UPDATE cleverbank.accounts SET number = ?, bank_id = ?, customer_id = ?, balance = ? WHERE id = ?
+    delete: DELETE FROM cleverbank.account WHERE id = ?
