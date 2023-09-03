@@ -14,6 +14,7 @@ public class Transaction {
     private Long id;
     private Timestamp dateTime;
     private BigDecimal amount;
-    private Long senderAccountId;
-    private Long recipientAccountId;
+    private String senderAccountNumber;
+    private String recipientAccountNumber;
+    private String transactionType;
 }

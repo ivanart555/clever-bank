@@ -14,14 +14,9 @@ import java.util.List;
 
 public class CustomerDAOImpl implements CustomerDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomerDAOImpl.class);
-    private final Connection connection;
-
-    public CustomerDAOImpl() throws SQLException {
-        this.connection = DataSource.getConnection();
-    }
 
     @Override
-    public List<Customer> getAll() throws DAOException {
+    public List<Customer> getAll(Connection connection) throws DAOException {
         List<Customer> customers = new ArrayList<>();
         String sqlStatement = SQLStatements.getValue("customers", "get.all");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
@@ -37,7 +32,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public Customer getById(Long id) throws DAOException {
+    public Customer getById(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("customers", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);
@@ -53,7 +48,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public void create(Customer customer) throws DAOException {
+    public void create(Customer customer, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("customers", "create");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, customer.getFirstName());
@@ -75,7 +70,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public void update(Customer customer) throws DAOException {
+    public void update(Customer customer, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("customers", "update");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setString(1, customer.getFirstName());
@@ -96,7 +91,7 @@ public class CustomerDAOImpl implements CustomerDAO {
     }
 
     @Override
-    public void delete(Long id) throws DAOException {
+    public void delete(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("customers", "delete");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);

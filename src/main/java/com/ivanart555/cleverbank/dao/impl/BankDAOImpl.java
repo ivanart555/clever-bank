@@ -21,7 +21,7 @@ public class BankDAOImpl implements BankDAO {
     }
 
     @Override
-    public List<Bank> getAll() throws DAOException {
+    public List<Bank> getAll(Connection connection) throws DAOException {
         List<Bank> banks = new ArrayList<>();
         String sqlStatement = SQLStatements.getValue("banks", "get.all");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
@@ -37,7 +37,7 @@ public class BankDAOImpl implements BankDAO {
     }
 
     @Override
-    public Bank getById(Long id) throws DAOException {
+    public Bank getById(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("banks", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);
@@ -53,7 +53,7 @@ public class BankDAOImpl implements BankDAO {
     }
 
     @Override
-    public void create(Bank bank) throws DAOException {
+    public void create(Bank bank, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("banks", "create");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, bank.getName());
@@ -74,7 +74,7 @@ public class BankDAOImpl implements BankDAO {
     }
 
     @Override
-    public void update(Bank bank) throws DAOException {
+    public void update(Bank bank, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("banks", "update");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setString(1, bank.getName());
@@ -94,7 +94,7 @@ public class BankDAOImpl implements BankDAO {
     }
 
     @Override
-    public void delete(Long id) throws DAOException {
+    public void delete(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("banks", "delete");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);

@@ -1,7 +1,6 @@
 package com.ivanart555.cleverbank.dao.impl;
 
 import com.ivanart555.cleverbank.dao.AccountDAO;
-import com.ivanart555.cleverbank.db.DataSource;
 import com.ivanart555.cleverbank.entity.Account;
 import com.ivanart555.cleverbank.exception.DAOException;
 import com.ivanart555.cleverbank.utils.config.SQLStatements;
@@ -18,12 +17,12 @@ public class AccountDAOImpl implements AccountDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountDAOImpl.class);
     private final Connection connection;
 
-    public AccountDAOImpl() throws SQLException {
-        this.connection = DataSource.getConnection();
+    public AccountDAOImpl(Connection connection) {
+        this.connection = connection;
     }
 
     @Override
-    public List<Account> getAll() throws DAOException {
+    public List<Account> getAll(Connection connection) throws DAOException {
         List<Account> accounts = new ArrayList<>();
         String sqlStatement = SQLStatements.getValue("accounts", "get.all");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
@@ -39,9 +38,10 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public Account getById(Long id) throws DAOException {
+    public Account getById(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("accounts", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
+            ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return mapResultSetToAccount(rs);
@@ -54,7 +54,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public void create(Account account) throws DAOException {
+    public void create(Account account, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("accounts", "create");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, account.getNumber());
@@ -77,7 +77,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public void update(Account account) throws DAOException {
+    public void update(Account account, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("accounts", "update");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setString(1, account.getNumber());
@@ -100,7 +100,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
-    public void delete(Long id) throws DAOException {
+    public void delete(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("accounts", "delete");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);

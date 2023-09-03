@@ -47,7 +47,8 @@ create table cleverbank.transactions
     date_time                timestamp            not null,
     amount                   numeric default 0.00 not null,
     sender_account_number    varchar,
-    recipient_account_number varchar
+    recipient_account_number varchar,
+    type                     varchar
 );
 
 

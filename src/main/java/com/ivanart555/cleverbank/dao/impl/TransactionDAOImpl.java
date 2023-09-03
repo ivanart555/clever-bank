@@ -16,12 +16,12 @@ public class TransactionDAOImpl implements TransactionDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionDAOImpl.class);
     private final Connection connection;
 
-    public TransactionDAOImpl() throws SQLException {
-        this.connection = DataSource.getConnection();
+    public TransactionDAOImpl(Connection connection) {
+        this.connection = connection;
     }
 
     @Override
-    public List<Transaction> getAll() throws DAOException {
+    public List<Transaction> getAll(Connection connection) throws DAOException {
         List<Transaction> transactions = new ArrayList<>();
         String sqlStatement = SQLStatements.getValue("transactions", "get.all");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
@@ -37,7 +37,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public Transaction getById(Long id) throws DAOException {
+    public Transaction getById(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("transactions", "get.byId");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);
@@ -53,13 +53,14 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public void create(Transaction transaction) throws DAOException {
+    public void create(Transaction transaction, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("transactions", "create");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS)) {
             ps.setTimestamp(1, transaction.getDateTime());
             ps.setBigDecimal(2, transaction.getAmount());
-            ps.setLong(3, transaction.getSenderAccountId());
-            ps.setLong(4, transaction.getRecipientAccountId());
+            ps.setString(3, transaction.getSenderAccountNumber());
+            ps.setString(4, transaction.getRecipientAccountNumber());
+            ps.setString(5, transaction.getTransactionType());
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -77,14 +78,16 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public void update(Transaction transaction) throws DAOException {
+    public void update(Transaction transaction, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("transactions", "update");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setTimestamp(1, transaction.getDateTime());
             ps.setBigDecimal(2, transaction.getAmount());
-            ps.setLong(3, transaction.getSenderAccountId());
-            ps.setLong(4, transaction.getRecipientAccountId());
-            ps.setLong(5, transaction.getId());
+            ps.setString(3, transaction.getSenderAccountNumber());
+            ps.setString(4, transaction.getRecipientAccountNumber());
+            ps.setString(5, transaction.getTransactionType());
+            ps.setLong(6, transaction.getId());
+
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -100,7 +103,7 @@ public class TransactionDAOImpl implements TransactionDAO {
     }
 
     @Override
-    public void delete(Long id) throws DAOException {
+    public void delete(Long id, Connection connection) throws DAOException {
         String sqlStatement = SQLStatements.getValue("transactions", "delete");
         try (PreparedStatement ps = connection.prepareStatement(sqlStatement)) {
             ps.setLong(1, id);
@@ -123,8 +126,9 @@ public class TransactionDAOImpl implements TransactionDAO {
         transaction.setId(resultSet.getLong("id"));
         transaction.setDateTime(resultSet.getTimestamp("date_time"));
         transaction.setAmount(resultSet.getBigDecimal("amount"));
-        transaction.setSenderAccountId(resultSet.getLong("sender_account_id"));
-        transaction.setRecipientAccountId(resultSet.getLong("recipient_account_id"));
+        transaction.setSenderAccountNumber(resultSet.getString("sender_account_number"));
+        transaction.setRecipientAccountNumber(resultSet.getString("recipient_account_number"));
+        transaction.setTransactionType(resultSet.getString("type"));
         return transaction;
     }
 }
