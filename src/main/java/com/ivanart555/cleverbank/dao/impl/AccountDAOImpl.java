@@ -85,6 +85,7 @@ public class AccountDAOImpl implements AccountDAO {
             ps.setLong(2, account.getBankId());
             ps.setLong(3, account.getCustomerId());
             ps.setBigDecimal(4, account.getBalance());
+            ps.setLong(5, account.getId());
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {

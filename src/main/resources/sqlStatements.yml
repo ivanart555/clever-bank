@@ -10,3 +10,9 @@
       create: INSERT INTO cleverbank.banks (name) VALUES (?)
       update: UPDATE cleverbank.banks SET name = ? WHERE id = ?
       delete: DELETE FROM cleverbank.banks WHERE id = ?
+  customers:
+      get.all: SELECT * FROM cleverbank.customers
+      get.byId: SELECT * FROM cleverbank.customers WHERE id = ?
+      create: INSERT INTO cleverbank.customers (first_name, last_name) VALUES (?, ?)
+      update: UPDATE cleverbank.customers SET first_name = ?, last_name = ? WHERE id = ?
+      delete: DELETE FROM cleverbank.customers WHERE id = ?
