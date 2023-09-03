@@ -33,7 +33,8 @@ create table cleverbank.accounts
     "customer_id" bigint                      not null
         constraint accounts_customers_id_fk
             references cleverbank.customers,
-    balance      numeric(15, 2) default 0.00 not null
+    balance      numeric(15, 2) default 0.00 not null,
+    "interest_applied_date" timestamp
 );
 
 

@@ -6,9 +6,15 @@ import com.ivanart555.cleverbank.entity.Account;
 import com.ivanart555.cleverbank.exception.DAOException;
 import com.ivanart555.cleverbank.exception.ServiceException;
 import com.ivanart555.cleverbank.services.AccountService;
+import com.ivanart555.cleverbank.utils.config.ConfigLoader;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class AccountServiceImpl implements AccountService {
@@ -63,4 +69,58 @@ public class AccountServiceImpl implements AccountService {
             throw new ServiceException("Failed to create account.");
         }
     }
+
+    @Override
+    public void applyInterestToAccounts() throws ServiceException {
+        List<Account> accounts;
+        try {
+            accounts = accountDAO.getAll(connection);
+        } catch (DAOException e) {
+            throw new ServiceException("Failed to get all accounts.");
+        }
+        for (Account acc : accounts) {
+            if (accrualNeeded(acc)) {
+                try {
+                    applyInterest(acc);
+                } catch (DAOException e) {
+                    throw new ServiceException("Failed to apply interest to account balance.");
+                }
+            }
+        }
+
+    }
+
+    private boolean accrualNeeded(Account account) {
+
+        return account.getInterestAppliedDate() == null || isCurrentMonthDifferent(account.getInterestAppliedDate());
+
+    }
+
+    private boolean isCurrentMonthDifferent(Timestamp dateToCompare) {
+
+        Calendar currentCalendar = Calendar.getInstance();
+        Calendar compareCalendar = Calendar.getInstance();
+        compareCalendar.setTimeInMillis(dateToCompare.getTime());
+
+        int currentMonth = currentCalendar.get(Calendar.MONTH);
+        int compareMonth = compareCalendar.get(Calendar.MONTH);
+
+        return currentMonth != compareMonth;
+    }
+
+    private void applyInterest(Account account) throws DAOException {
+        double interest = Double.parseDouble(ConfigLoader.getValue("accountBalanceInterestRate"));
+
+        BigDecimal balance = account.getBalance();
+
+        BigDecimal interestRateDecimal = BigDecimal.valueOf(interest / 100.0);
+        BigDecimal interestValue = balance.multiply(interestRateDecimal);
+
+        BigDecimal newValue = balance.add(interestValue);
+
+        account.setBalance(newValue);
+        account.setInterestAppliedDate(Timestamp.valueOf(LocalDateTime.now()));
+        accountDAO.update(account, connection);
+    }
+
 }

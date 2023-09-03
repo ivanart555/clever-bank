@@ -79,7 +79,8 @@ public class AccountDAOImpl implements AccountDAO {
             ps.setLong(2, account.getBankId());
             ps.setLong(3, account.getCustomerId());
             ps.setBigDecimal(4, account.getBalance());
-            ps.setLong(5, account.getId());
+            ps.setTimestamp(5, account.getInterestAppliedDate());
+            ps.setLong(6, account.getId());
 
             int affectedRows = ps.executeUpdate();
             if (affectedRows > 0) {
@@ -122,6 +123,7 @@ public class AccountDAOImpl implements AccountDAO {
         account.setCustomerId(resultSet.getLong("customer_id"));
 
         account.setBalance(resultSet.getBigDecimal("balance"));
+        account.setInterestAppliedDate(resultSet.getTimestamp("interest_applied_date"));
 
         return account;
     }

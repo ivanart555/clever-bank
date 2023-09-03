@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Data
@@ -18,6 +19,7 @@ public class Account {
     private Long bankId;
     private Long customerId;
     private BigDecimal balance;
+    private Timestamp interestAppliedDate;
 
     public ReentrantLock getLock() {
         return lock;
