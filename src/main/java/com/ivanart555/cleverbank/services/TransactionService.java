@@ -10,4 +10,7 @@ public interface TransactionService extends GenericService<Transaction, Long> {
 
     void depositMoney(Long accountId, BigDecimal amount) throws ServiceException;
 
+    void withdrawMoney(Long accountId,BigDecimal amount) throws ServiceException;
+
+    void transferMoney(Long senderAccountId, Long recipientAccountId, BigDecimal amount) throws ServiceException;
 }

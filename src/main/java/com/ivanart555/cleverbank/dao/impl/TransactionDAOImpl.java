@@ -11,9 +11,12 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TransactionDAOImpl implements TransactionDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionDAOImpl.class);
+
 
     @Override
     public List<Transaction> getAll(Connection connection) throws DAOException {

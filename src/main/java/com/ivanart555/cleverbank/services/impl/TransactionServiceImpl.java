@@ -35,18 +35,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void depositMoney(Long accountId, BigDecimal amount) throws ServiceException {
+        ReentrantLock lock = null;
         try {
             connection.setAutoCommit(false);
 
             Account account = accountDAO.getById(accountId, connection);
 
-            ReentrantLock lock = account.getLock();
+            lock = account.getLock();
             lock.lock();
-
-            BigDecimal currentBalance = account.getBalance();
-            BigDecimal newBalance = currentBalance.add(amount);
-            account.setBalance(newBalance);
-            accountDAO.update(account, connection);
 
             Transaction transaction = new Transaction();
             transaction.setDateTime(new Timestamp(System.currentTimeMillis()));
@@ -54,9 +50,14 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setSenderAccountNumber(null);
             transaction.setRecipientAccountNumber(account.getNumber());
             transaction.setTransactionType(DEPOSIT);
+
+            BigDecimal currentBalance = account.getBalance();
+            BigDecimal newBalance = currentBalance.add(amount);
+            account.setBalance(newBalance);
+            accountDAO.update(account, connection);
             transactionDAO.create(transaction, connection);
 
-           connection.commit();
+            connection.commit();
         } catch (DAOException | SQLException e) {
             try {
                 connection.rollback();
@@ -73,6 +74,99 @@ public class TransactionServiceImpl implements TransactionService {
                     LOGGER.warn("Failed to close connection!");
                 }
             }
+            assert lock != null;
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void withdrawMoney(Long accountId, BigDecimal amount) throws ServiceException {
+        ReentrantLock lock = null;
+        try {
+            connection.setAutoCommit(false);
+            Account account = accountDAO.getById(accountId, connection);
+            lock = account.getLock();
+            lock.lock();
+
+            if (account.getBalance().compareTo(amount) >= 0) {
+                account.setBalance(account.getBalance().subtract(amount));
+
+                Transaction transaction = new Transaction();
+                transaction.setDateTime(new Timestamp(System.currentTimeMillis()));
+                transaction.setAmount(amount);
+                transaction.setSenderAccountNumber(account.getNumber());
+                transaction.setRecipientAccountNumber(null);
+                transaction.setTransactionType(WITHDRAW);
+                accountDAO.update(account, connection);
+                transactionDAO.create(transaction, connection);
+
+                connection.commit();
+
+            } else throw new ServiceException("Insufficient funds!");
+        } catch (DAOException | SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                throw new ServiceException("Failed to perform withdraw transaction. Roll back.", rollbackException);
+            }
+            throw new ServiceException("Failed to withdraw money.", e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                    connection.close();
+                } catch (SQLException closeException) {
+                    LOGGER.warn("Failed to close connection!");
+                }
+            }
+            assert lock != null;
+            lock.unlock();
+        }
+    }
+
+
+    @Override
+    public void transferMoney(Long senderAccountId, Long recipientAccountId, BigDecimal amount) throws ServiceException {
+        ReentrantLock senderAccLock;
+        ReentrantLock recipientAccLock;
+        try {
+            connection.setAutoCommit(false);
+
+            Account senderAccount = accountDAO.getById(senderAccountId, connection);
+            senderAccLock = senderAccount.getLock();
+            senderAccLock.lock();
+
+            Account recipientAccount = accountDAO.getById(recipientAccountId, connection);
+            recipientAccLock = recipientAccount.getLock();
+            recipientAccLock.lock();
+
+            if (senderAccount.getBalance().compareTo(amount) >= 0) {
+                senderAccount.setBalance(senderAccount.getBalance().subtract(amount));
+                recipientAccount.setBalance(recipientAccount.getBalance().add(amount));
+
+                Transaction transaction = new Transaction();
+                transaction.setDateTime(new Timestamp(System.currentTimeMillis()));
+                transaction.setAmount(amount);
+                transaction.setSenderAccountNumber(senderAccount.getNumber());
+                transaction.setRecipientAccountNumber(recipientAccount.getNumber());
+                transaction.setTransactionType(TRANSFER);
+
+                accountDAO.update(senderAccount, connection);
+                accountDAO.update(recipientAccount, connection);
+                transactionDAO.create(transaction, connection);
+
+                connection.commit();
+            } else {
+                throw new ServiceException("Insufficient funds!");
+            }
+
+        } catch (SQLException | DAOException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                throw new ServiceException("Failed to perform transfer transaction. Roll back.", rollbackException);
+            }
+            throw new ServiceException("Failed to transfer money.", e);
         }
     }
 

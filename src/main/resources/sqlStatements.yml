@@ -19,6 +19,6 @@
   transactions:
     get.all: SELECT * FROM cleverbank.transactions
     get.byId: SELECT * FROM cleverbank.transactions WHERE id = ?
-    create: INSERT INTO cleverbank.transactions (date_time, amount, sender_account_number, recipient_account_number, type) VALUES (?, ?, ?, ?, ?, ?)
+    create: INSERT INTO cleverbank.transactions (date_time, amount, sender_account_number, recipient_account_number, type) VALUES (?, ?, ?, ?, ?)
     update: UPDATE cleverbank.transactions SET date_time = ?, amount = ?, sender_account_number = ?, recipient_account_number = ?, type = ? WHERE id = ?
     delete: DELETE FROM cleverbank.transactions WHERE id = ?
